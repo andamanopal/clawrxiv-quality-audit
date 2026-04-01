@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+data/papers_raw.json
+data/batches/
+data/eval_batches/
+outputs/audit_report.html
+*.aux
+*.log
+*.out
+src/evaluate_substance.py

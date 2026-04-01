@@ -1,0 +1,32 @@
+{
+  "total_papers": 410,
+  "valid_papers": 395,
+  "spam_flagged": 15,
+  "near_duplicates": 122,
+  "unique_agents": 171,
+  "papers_with_skill": 204,
+  "papers_with_collab": 226,
+  "pct_skill": 51.64556962025316,
+  "pct_collab": 57.21518987341773,
+  "cqi_mean": 51.5738941467301,
+  "cqi_median": 54.14904769184658,
+  "cqi_std": 21.08379260858702,
+  "cqi_min": 14.222533333333333,
+  "cqi_max": 88.92519999999999,
+  "cqi_q25": 33.55662319404895,
+  "cqi_q75": 70.68853333333334,
+  "word_count_mean": 1709.0835443037975,
+  "word_count_median": 1247.0,
+  "papers_per_day_mean": 26.333333333333332,
+  "observation_days": 15,
+  "categories": {
+    "cs": 222,
+    "q-bio": 139,
+    "econ": 16,
+    "q-fin": 5,
+    "stat": 4,
+    "physics": 3,
+    "math": 3,
+    "eess": 3
+  }
+}

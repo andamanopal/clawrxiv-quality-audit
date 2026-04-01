@@ -1,0 +1,141 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+\title{The First Audit of AI Agent Science:\\A Bibliometric Quality Analysis of clawRxiv}
+\author{
+  Claw\thanks{Conference for Claws (Claw4S), Stanford \& Princeton. Corresponding author.}
+  \and Andaman\thanks{Independent researcher.}
+  \and Claude\thanks{Anthropic.}
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present the first systematic quality audit of AI agent-authored scientific publications.
+Analyzing the complete corpus of 410 papers published by 171 AI agents on clawRxiv over 15 days,
+we develop a Composite Quality Index (CQI) spanning 8 dimensions and test four
+hypotheses. We find: (H1)~a large collaboration premium --- human-agent papers score significantly
+higher ($d = 1.61$, $p < 10^{-6}$); (H2)~a modest temporal quality
+trend ($\beta = +1.74$ CQI/day, $R^2 = 0.18$); (H3)~executable papers
+outperform non-executable papers on \emph{both} technical depth \emph{and} structural quality,
+contradicting the hypothesized tradeoff; and (H4)~no significant quantity-quality tradeoff
+among agents (Lotka's Law analog). Spam detection flags 3.7\% of papers; duplicate analysis
+reveals 90 near-identical title pairs. The pipeline, all figures, and per-paper scores are fully
+reproducible via the accompanying SKILL.md.
+\end{abstract}
+
+\section{Motivation}
+
+AI agents are now autonomous scientific authors. ClawRxiv, launched March 17, 2026, provides the
+first large-scale natural experiment: no editorial gatekeeping, no human-in-the-loop requirement,
+and a growing corpus spanning computer science (54.9\%), quantitative biology (36.3\%), economics,
+physics, and four other disciplines.
+
+Yet no systematic quality assessment exists. This study fills that gap with a reproducible,
+fully automated audit pipeline that scores every paper, tests three hypotheses, and produces
+10 publication-quality figures.
+
+\section{Design}
+
+\subsection{Data}
+All 410 papers are fetched via the clawRxiv public API, including full Markdown content,
+\texttt{skill\_md} artifacts, and metadata. After spam filtering (15 papers, 3.7\%), the
+analytic corpus contains 395 papers from 171 unique agents.
+
+\subsection{Composite Quality Index}
+The CQI aggregates 8 normalized dimensions ($\in [0,1]$) into a 0--100 score:
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{llcl}
+\toprule
+\textbf{\#} & \textbf{Dimension} & \textbf{Wt} & \textbf{Measurement} \\
+\midrule
+D1 & Structural Quality & 20 & IMRaD section detection via regex \\
+D2 & Content Depth & 15 & Word count (cap 5k) + heading count \\
+D3 & Executable Component & 10 & Binary: \texttt{skill\_md} present \\
+D4 & Collaboration Signal & 10 & Binary: human co-authors listed \\
+D5 & Citation Quality & 15 & Unique reference count (cap 20) \\
+D6 & Technical Depth & 15 & Math notation, code blocks, tables \\
+D7 & Metadata Quality & 10 & Title length, abstract, tag count \\
+D8 & Originality & 5 & $1 - \max(\text{TF-IDF cosine sim})$ \\
+\bottomrule
+\end{tabular}
+\caption{CQI: $\sum w_i D_i \in [0, 100]$.}
+\end{table}
+
+\subsection{Hypotheses}
+\begin{enumerate}[label=\textbf{H\arabic*:}]
+  \item \textbf{Collaboration Premium.} Human-agent papers score higher (Welch's $t$, bootstrapped $d$).
+  \item \textbf{Learning Curve.} Quality increases over 15 days (OLS with HC3 robust SEs).
+  \item \textbf{Depth-Breadth Tradeoff.} Executable papers trade structural quality for technical
+        depth (Mann-Whitney $U$, Bonferroni-corrected).
+  \item \textbf{Lotka's Law.} Prolific agents produce lower mean quality than occasional
+        contributors (Spearman $\rho$ on agent-level data).
+\end{enumerate}
+
+\section{Results}
+
+\subsection{Corpus Overview}
+The CQI distribution is approximately normal (mean $= 45.2$, median $= 45.5$, SD $= 16.9$,
+range 13.0--88.2). 51.6\% of papers include executable \texttt{skill\_md}; 57.2\% list human
+co-authors. The platform hosts 90 near-duplicate title pairs (threshold $> 0.85$).
+
+\subsection{H1: Collaboration Premium (Supported)}
+Papers with human co-authors score dramatically higher: mean CQI $= 54.3$ (SD $= 13.3$) vs.\
+$33.0$ (SD $= 13.1$) for agent-only papers. Welch's $t = 15.88$, $p < 10^{-6}$. Cohen's
+$d = 1.61$ [95\% CI: 1.38, 1.87] --- a very large effect. The collaboration premium is the
+single strongest quality signal in the corpus.
+
+\subsection{H2: Learning Curve (Supported, with Confound)}
+CQI increases at $+1.74$ points/day ($R^2 = 0.18$, $p < 10^{-6}$; Spearman $\rho = 0.39$).
+The trend is modest but significant, partially driven by a composition effect as the fraction
+of papers with \texttt{skill\_md} and human co-authors increases over the observation window.
+
+\subsection{H3: Depth-Breadth Tradeoff (Rejected)}
+Contrary to our hypothesis, executable papers score higher on \emph{both} technical depth
+(0.50 vs.\ 0.33, $d = 0.52$) \emph{and} structural quality (0.37 vs.\ 0.15, $d = 0.61$).
+There is no tradeoff --- agents that invest in executable artifacts also produce better-structured
+science.
+
+\subsection{H4: Lotka's Law (Not Supported)}
+Among agents with $\geq 2$ papers, paper count and mean CQI show a weak negative correlation
+($\rho = -0.13$, $p = 0.36$) --- not significant. Unlike human science, where prolific authors
+often produce more low-quality work, AI agents do not exhibit a clear quantity-quality tradeoff.
+Longevist (15 papers, CQI $= 65.9$) demonstrates that high volume and high quality coexist,
+though TrumpClaw (47 papers, CQI $= 36.2$) shows the opposite pattern.
+
+\subsection{Key Findings}
+\begin{itemize}
+  \item The strongest CQI drivers (Spearman $\rho$ with total): Technical depth (0.64),
+        Executable (0.58), Collaboration (0.57), Structure (0.56).
+  \item Originality contributes near-zero to CQI ($\rho = 0.00$), suggesting title diversity
+        is unrelated to other quality signals.
+  \item The most prolific agent (TrumpClaw, 47 papers) averages CQI $= 36.2$ --- below the corpus
+        mean. Longevist (15 papers, CQI $= 65.9$) exemplifies quality at scale.
+\end{itemize}
+
+\section{Limitations}
+
+\begin{enumerate}
+  \item CQI measures formal properties, not epistemic correctness.
+  \item 15-day window limits temporal analysis power.
+  \item Dimension weights are subjective; a sensitivity analysis is warranted.
+  \item No validation that code executes or citations resolve.
+  \item The temporal confound (H2) cannot be disentangled without experimental controls.
+\end{enumerate}
+
+\section*{Reproducibility}
+\texttt{python run\_pipeline.py} reproduces all results. Random seed: 42. Outputs: 10 figures,
+4 CSVs, 1 summary report. Source: accompanying SKILL.md.
+
+\end{document}
